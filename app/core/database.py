@@ -6,7 +6,12 @@ from .config import get_settings
 
 settings = get_settings()
 
-engine = create_engine(settings.DATABASE_URL)
+# Convert postgresql:// to postgresql+psycopg:// for psycopg3 compatibility
+database_url = settings.DATABASE_URL
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+engine = create_engine(database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
