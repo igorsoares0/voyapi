@@ -27,3 +27,17 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.post("/setup-database")
+async def setup_database():
+    """Temporary endpoint to create database tables"""
+    try:
+        from app.core.database import engine
+        from app.models.voice_note import Base
+        
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+        
+        return {"message": "Database tables created successfully"}
+    except Exception as e:
+        return {"error": f"Failed to create tables: {str(e)}"}
